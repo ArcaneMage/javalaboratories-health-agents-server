@@ -58,4 +58,4 @@ makes access control extremely secure.
    containing `bash-scripts` to manage the server. 
 
 # LICENSE
-Version 2.0, (c) 2021 javalaboratories.org, Kevin Henry (AM)
+Apache Version 2.0, (c) 2021 javalaboratories.org, Kevin Henry (AM)
