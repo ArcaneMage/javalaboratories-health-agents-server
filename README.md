@@ -57,5 +57,5 @@ makes access control extremely secure.
    verify` and this will create a zipped package, something like `health-agents-server-1.0.3-SNAPSHOT.zip`,
    containing `bash-scripts` to manage the server. 
 
-## LICENSE
+## License
 Apache Version 2.0, (c) 2021 javalaboratories.org, Kevin Henry (AM)
