@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.4</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>org.javalaboratories</groupId>
+	<artifactId>health-agents-server</artifactId>
+	<version>1.0.3-SNAPSHOT</version>
+	<description>Health-Agents server. Monitors server processes for possible security breaches</description>
+	<properties>
+		<java.version>1.8</java.version>
+		<javalaboratories.version>1.1.0-RELEASE</javalaboratories.version>
+		<logback.version>1.2.3</logback.version>
+		<janino.version>3.1.3</janino.version>
+
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<timestamp>${maven.build.timestamp}</timestamp>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.hakky54</groupId>
+			<artifactId>logcaptor</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.javalaboratories</groupId>
+			<artifactId>java-extensions</artifactId>
+			<version>${javalaboratories.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>${janino.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<!-- Inform Spring Boot which files are processed by the Maven filter, and thus
+		     indicating applicable resources for deployment. -->
+		<resources>
+			<resource>
+				<!-- Perform filtering on resources but exclude certificate (not filterable) -->
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>
+						javalaboratories.jks
+					</exclude>
+				</excludes>
+			</resource>
+			<!-- Package/deploy unfiltered certificate -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>
+						javalaboratories.jks
+					</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>true</filtering>
+				<directory>bash-scripts</directory>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<configuration>
+							<target name ="Creating software package for deployment">
+								<copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${project.basedir}/final-artifacts/${project.artifactId}/lib"/>
+								<copy file="${project.build.outputDirectory}/shutdown.sh" todir="${project.basedir}/final-artifacts/${project.artifactId}/bin"/>
+								<copy file="${project.build.outputDirectory}/startup-template.sh" tofile="${project.basedir}/final-artifacts/${project.artifactId}/bin/startup.sh"/>
+								<copy file="${project.build.outputDirectory}/restart.sh" todir="${project.basedir}/final-artifacts/${project.artifactId}/bin"/>
+								<mkdir dir="${project.basedir}/final-artifacts/${project.artifactId}/log"/>
+
+								<zip destfile="${project.basedir}/${project.build.finalName}.zip" basedir="${project.basedir}/final-artifacts"/>
+								<delete dir="${project.basedir}/final-artifacts"/>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

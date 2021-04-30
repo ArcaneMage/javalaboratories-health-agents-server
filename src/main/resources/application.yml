@@ -1,0 +1,28 @@
+server:
+  port: 443
+  ssl:
+    key-store-type: JKS
+    key-store: classpath:javalaboratories.jks
+    key-store-password: 65533714-JL
+    key-alias: javalaboratories-server-agents
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
+
+spring:
+  profiles:
+    active: default
+
+health-agents:
+  rsa-security:
+    auto-generated: false
+    security-id: c3111db326f6702bb0354dee2b8dafc9
+  probes:
+    factory:
+      command-renderer: macos
+
+application-build-info:
+  artifact: @project.artifactId@
+  version: @project.version@
+  buildtimestamp: @maven.build.timestamp@
