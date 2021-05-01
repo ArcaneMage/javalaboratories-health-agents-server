@@ -28,6 +28,10 @@ hs_err_pid*
 *.iml
 target/
 
+# do not upload unencrypted security-passwd.yml file
+security-passwd.yml
+password-generator.txt
+
 # javalaboratories certificates
 javalaboratories-jks-notes.txt
 javalaboratories.cer

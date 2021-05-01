@@ -1,9 +1,16 @@
 package org.javalaboratories.healthagents.repository;
 
 import org.javalaboratories.core.Maybe;
+import org.javalaboratories.healthagents.model.yaml.IdentityManagement;
 import org.javalaboratories.healthagents.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -15,28 +22,29 @@ import java.util.Objects;
  */
 @Repository
 public final class MonitorRepository {
-    public static final String AUTHORISED_USER = "monitor";
-    public static final String AUTHORISED_TEST_USER = "test";
-    public static final String ROLE_MONITOR ="MONITOR";
-    public static final String ROLE_NONE = "NONE";
 
-    private static final String AUTHORISED_USER_PASSWORD = "6128-7314@javalaboratories.org";
-    private static final String AUTHORISED_TEST_USER_PASSWORD = "FFFF-00FF@javalaboratories.org";
+    public static final String ROLE_MONITOR ="MONITOR";
+
+    private static final Logger logger = LoggerFactory.getLogger(MonitorRepository.class);
+
+    public static final String SECURITY_PASSWD_FILE="security-passwd.yml";
+
+    private IdentityManagement identities;
+
+    public MonitorRepository() {
+        Yaml yaml = new Yaml(new Constructor(IdentityManagement.class));
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(SECURITY_PASSWD_FILE)) {
+            identities = yaml.loadAs(stream,IdentityManagement.class);
+        } catch (IOException e) {
+            logger.error("Failed to close '{}' stream",SECURITY_PASSWD_FILE);
+        }
+    }
 
     public Maybe<User> findByName(final String name) {
         Objects.requireNonNull(name,"Require getName argument");
-
-        Maybe<User> result;
-        switch(name) {
-            case AUTHORISED_USER:
-                result = Maybe.of(new User(AUTHORISED_USER, AUTHORISED_USER_PASSWORD, Collections.singletonList(ROLE_MONITOR)));
-                break;
-            case AUTHORISED_TEST_USER:
-                result = Maybe.of(new User(AUTHORISED_TEST_USER, AUTHORISED_TEST_USER_PASSWORD, Collections.singletonList(ROLE_NONE)));
-                break;
-            default:
-                result = Maybe.empty();
-        }
-        return result;
+        return identities.getUsers().stream()
+            .filter(u -> u.getName().equals(name))
+            .map(u -> Maybe.of(new User(u.getName(),u.getPassword(),Collections.unmodifiableList(u.getRoles()))))
+            .reduce(Maybe.empty(),(a,b) -> b);
     }
 }

@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
 
     @Autowired
-    private MonitorDetailsService monitor;
+    private MonitorDetailsService monitorService;
 
     @Autowired
     private ServiceConfiguration configuration;
@@ -58,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(monitor);
+        authProvider.setUserDetailsService(monitorService);
         authProvider.setPasswordEncoder(encoder());
         return authProvider;
     }
@@ -136,7 +136,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     // Notice the we are injecting userDetailsService and DigestAuthenticationEntryPoint
     private DigestAuthenticationFilter getDigestAuthFilter() throws Exception {
         DigestAuthenticationFilter filter = new DigestAuthenticationFilter();
-        filter.setUserDetailsService(monitor);
+        filter.setUserDetailsService(monitorService);
         filter.setAuthenticationEntryPoint(getDigestEntryPoint());
         return filter;
     }
