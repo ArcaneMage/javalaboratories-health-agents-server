@@ -1,15 +1,19 @@
 package org.javalaboratories.healthagents.cryptography;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AesCryptographyTest {
 
     private AesCryptography cryptography;
+    private static final String SECURITY_PASSWD_FILE = "security-passwd.yml";
 
     @Test
     public void testAesCryptography_EncryptString_Pass() {
@@ -41,5 +45,19 @@ public class AesCryptographyTest {
 
         String result = AesCryptography.decrypt(s);
         assertEquals("This is a test of encryption, but should be ok",result);
+    }
+
+    @Disabled("Only enable to create the encrypted security identity file; move the resultant file to the Resources directory")
+    public void utilityMethod_EncryptedSecurityPasswdYanl() throws IOException {
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(SECURITY_PASSWD_FILE)) {
+            int c;
+            StringBuilder buffer = new StringBuilder();
+            while ( (c = stream.read()) != -1 ) {
+                buffer.append((char) c);
+            }
+            String data = AesCryptography.encrypt(buffer.toString());
+            Path path = Paths.get(SECURITY_PASSWD_FILE+".enc");
+            Files.write(path,data.getBytes());
+        }
     }
 }
