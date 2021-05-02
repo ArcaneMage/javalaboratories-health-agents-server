@@ -1,10 +1,11 @@
 # Health-Agents Server
 
 ## Technologies
-* Spring Boot 2.4.4, Spring Framework 5.3.5
-* Digest Authorization security applied to REST API
-* RsaSecureIdAuthenticationFilter introduced for additional security of REST API  
-* Enabled HTTPS/SSL
+* Spring Boot 2.4.4, Spring Framework 5.3.5.
+* Digest Authorization security applied to REST API.
+* RsaSecureIdAuthenticationFilter introduced for additional security of REST API.  
+* Enabled HTTPS/SSL.
+* AES Encryption for Identity Management file.
 
 ## Introduction
 This application has a number of implemented `Health-Probe` agents that are
@@ -43,11 +44,29 @@ rectified, the following response indicates the VPN server is now rectified, hen
 }
 ```
 ## REST API Endpoints
-Endpoints are secured with Digest security roles, namely the `ROLE_MONITOR`, and the `monitor` user
-has this role. Having said that, the `test` user has `ROLE_NONE` assigned and therefore has no access
+Endpoints are secured with Digest security roles, namely the `ROLE_MONITOR`, and only the `monitor` user
+possess this role. Having said that, the `test` user has `ROLE_NONE` assigned and therefore has no access
 to any of the endpoints. Therefore, if the incorrect credentials are supplied, 401 (Unauthorised) or 
-403 (Forbidden) is returned. Because the credentials are encrypted with MD5, and sent over HTTPS, this 
-makes access control extremely secure.
+403 (Forbidden) is returned. Because the credentials are encrypted with MD5 (a digest authentication 
+requirement), and sent over HTTPS, this makes access control extremely secure. However, the user and their 
+roles are defined within the `Identity Management` file which is AES encrypted for security reasons, refer 
+to `security-passwd.yml.enc` file. Although encrypted the structure is something like the following:
+```
+---
+# Identity Management of Health-Agent server
+users:
+  - name: monitor
+    password: <password>
+    roles:
+      - MONITOR
+  - name: test
+    password: <password>
+    roles:
+      - NONE
+```
+There is no limit to how many users required, but the requirement is that the file must be encrypted after 
+amendment. The test class `AesCryptographyTest` does supply a utility method with which to create
+the encrypted `Yaml` file, but it must reside the main `resource` directory once created.
 
 ## Building the application
 1. Clone the repository
