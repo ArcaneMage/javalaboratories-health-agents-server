@@ -48,7 +48,7 @@ public class AesCryptographyTest {
     }
 
     @Disabled("Only enable to create the encrypted security identity file; move the resultant file to the Resources directory")
-    public void utilityMethod_EncryptedSecurityPasswdYanl() throws IOException {
+    public void utilityMethod_EncryptedSecurityPasswdYaml() throws IOException {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(SECURITY_PASSWD_FILE)) {
             int c;
             StringBuilder buffer = new StringBuilder();
