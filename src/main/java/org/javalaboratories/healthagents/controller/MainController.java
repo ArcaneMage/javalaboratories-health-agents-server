@@ -5,7 +5,7 @@ import org.javalaboratories.healthagents.probes.CommandRendererFactory;
 import org.javalaboratories.healthagents.probes.HealthProbe;
 import org.javalaboratories.healthagents.probes.OpenVpnHealthProbe;
 import org.javalaboratories.healthagents.probes.PureFtpHealthProbe;
-import org.javalaboratories.util.Arguments;
+import org.javalaboratories.core.util.Arguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

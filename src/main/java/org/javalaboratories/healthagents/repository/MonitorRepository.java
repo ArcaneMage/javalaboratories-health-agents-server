@@ -1,7 +1,7 @@
 package org.javalaboratories.healthagents.repository;
 
 import org.javalaboratories.core.Maybe;
-import org.javalaboratories.healthagents.cryptography.AesCryptography;
+import org.javalaboratories.core.cryptography.AesCryptography;
 import org.javalaboratories.healthagents.model.yaml.IdentityManagement;
 import org.javalaboratories.healthagents.model.User;
 import org.springframework.stereotype.Repository;
