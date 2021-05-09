@@ -112,6 +112,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/ftp/health").hasRole(MonitorRepository.ROLE_MONITOR)
                 .antMatchers("/secure-traffic/health").hasRole(MonitorRepository.ROLE_MONITOR)
+                .antMatchers("/service/health").hasRole(MonitorRepository.ROLE_MONITOR)
                 .and()
 
                 .anonymous().disable()

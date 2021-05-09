@@ -1,11 +1,12 @@
 package org.javalaboratories.healthagents.controller;
 
 import org.javalaboratories.healthagents.model.Response;
+import org.javalaboratories.core.util.Arguments;
 import org.javalaboratories.healthagents.probes.CommandRendererFactory;
 import org.javalaboratories.healthagents.probes.HealthProbe;
 import org.javalaboratories.healthagents.probes.OpenVpnHealthProbe;
 import org.javalaboratories.healthagents.probes.PureFtpHealthProbe;
-import org.javalaboratories.core.util.Arguments;
+import org.javalaboratories.healthagents.probes.ServiceHealthProbe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class MainController {
 
     @Autowired
     private CommandRendererFactory factory;
+    @Autowired
+    private ServiceHealthProbe serviceHealthProbe;
 
     /**
      * Handles {@code GET /api/agents/ftp/health} endpoint.
@@ -62,6 +65,18 @@ public class MainController {
     @GetMapping("/secure-traffic/health")
     public ResponseEntity<Response> getVpnHealth(final HttpServletRequest request) {
         HealthProbe probe = new OpenVpnHealthProbe(factory);
+        return handleRequest(probe,request);
+    }
+
+    /**
+     * Handles {@code GET /api/agents/service/health} endpoint.
+     * @param request Incoming GET request: note security has already authorised
+     *                this request.
+     * @return Response object encapsulating with status of the VPN service.
+     */
+    @GetMapping("/service/health")
+    public ResponseEntity<Response> getServiceHealth(final HttpServletRequest request) {
+        HealthProbe probe = serviceHealthProbe;
         return handleRequest(probe,request);
     }
 

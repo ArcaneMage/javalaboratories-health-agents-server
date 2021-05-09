@@ -1,8 +1,8 @@
-package org.javalaboratories.healthagents;
+package org.javalaboratories.healthagents.controller;
 
 import nl.altindag.log.LogCaptor;
 import org.javalaboratories.healthagents.configuration.RsaSecureIdAuthenticationFilter;
-import org.javalaboratories.healthagents.controller.MainController;
+import org.javalaboratories.healthagents.probes.HealthProbe;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,6 +26,17 @@ public class MainControllerIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	private final HealthProbe mockHealthProbe = new HealthProbe() {
+		@Override
+		public String getName() {
+			return "VPN Probe (Mock)";
+		}
+  		@Override
+		public boolean detect() {
+			return true;
+		}
+	};
 
 	@Test
 	public void testMainController_FtpHealth_Forbidden() throws Exception {
@@ -153,6 +164,21 @@ public class MainControllerIntegrationTest {
 		assertTrue(logCaptor.getInfoLogs().stream()
 				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be down")));
 	}
+
+	@Test
+	@WithUserDetails("monitor") // ROLE_MONITOR
+	public void testMainController_VpnHealth_Ok() throws Exception {
+		// Given
+		// When
+		LogCaptor logCaptor = LogCaptor.forClass(MainController.class);
+		mockMvc.perform(getWithCredentials("https://localhost/api/agents/service/health")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+		// Then
+		assertTrue(logCaptor.getInfoLogs().stream()
+				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("No additional information")));
+	}
+
 
 	private MockHttpServletRequestBuilder getWithCredentials(final String url) {
 		return MockMvcRequestBuilders.get(url)
