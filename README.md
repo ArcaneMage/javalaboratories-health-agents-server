@@ -2,7 +2,7 @@
 
 ## Technologies
 * Spring Boot 2.4.4, Spring Framework 5.3.5.
-* Digest Authorization security applied to REST API.
+* Digest Authorization security applied to REST APIs.
 * RsaSecureIdAuthenticationFilter introduced for additional security of REST API.  
 * Enabled HTTPS/SSL.
 * AES Encryption for Identity Management file.
@@ -10,10 +10,11 @@
 ## Introduction
 This application has a number of implemented `Health-Probe` agents that are
 responsible or detecting the availability of specific services, these are as follows:
-| HealthProbe       | Description                           | Endpoint                         |
-| ------------------|---------------------------------------|----------------------------------|
-| OpenVpnHealthProbe| Detects availability of OpenVPN server| /api/agents/secure-traffic/health|
-| PureFtpHealthProbe| Detects availability of PureFTP server| /api/agents/ftp/health           |
+| HealthProbe       | Description                                       | Endpoint                         |
+| ------------------|---------------------------------------------------|----------------------------------|
+| OpenVpnHealthProbe| Detects availability of OpenVPN server            | /api/agents/secure-traffic/health|
+| PureFtpHealthProbe| Detects availability of PureFTP server            | /api/agents/ftp/health           |
+| ServiceHealthProbe| Detects availability of this Health-Agents server | /api/agents/service/health       |
 
 There will be additional `HealthProbes` implemented in the not too distant future. The inspiration for
 this application came about when I deployed the `OpenVPN` server in the cloud, but needed to determine
