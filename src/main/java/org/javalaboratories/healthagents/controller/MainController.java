@@ -1,6 +1,5 @@
 package org.javalaboratories.healthagents.controller;
 
-import org.javalaboratories.core.Either;
 import org.javalaboratories.healthagents.model.Response;
 import org.javalaboratories.core.util.Arguments;
 import org.javalaboratories.healthagents.probes.CommandRendererFactory;
