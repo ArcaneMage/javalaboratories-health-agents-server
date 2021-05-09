@@ -94,10 +94,7 @@ public class MainController {
      */
     protected final ResponseEntity<Response> handleRequest(final HealthProbe probe, final HttpServletRequest request) {
         Function<HealthProbe,ResponseEntity<Response>> function = timeRequest(p -> {
-            Either<Response,Response> either = detect(p);
-
-            Response response = either.fold(Function.identity(), Function.identity());
-
+            Response response = detect(p);
             logger.info("Responding with '{}' to monitor",response);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/json; charset=utf-8");
@@ -107,24 +104,24 @@ public class MainController {
         return function.apply(probe);
     }
 
-    private Either<Response,Response> detect(final HealthProbe probe) {
-        Either<Response,Response> response;
+    private Response detect(final HealthProbe probe) {
+        Response response;
         ZonedDateTime timestamp = ZonedDateTime.now();
         boolean detected = probe.detect();
         response = detected
-                ? Either.right(Response.builder()
-                    .zonedTimestamp(timestamp)
-                    .status(HttpStatus.OK.value())
-                    .meaning(HttpStatus.OK.getReasonPhrase())
-                    .agent(probe.getName())
-                    .build())
-                : Either.left(Response.builder()
-                    .zonedTimestamp(timestamp)
-                    .status(HttpStatus.NOT_IMPLEMENTED.value())
-                    .meaning(HttpStatus.NOT_IMPLEMENTED.getReasonPhrase())
-                    .agent(probe.getName())
-                    .message(String.format("Probed service with '%s' and it appears to be down", probe.getName()))
-                    .build());
+            ? Response.builder()
+                .zonedTimestamp(timestamp)
+                .status(HttpStatus.OK.value())
+                .meaning(HttpStatus.OK.getReasonPhrase())
+                .agent(probe.getName())
+                .build()
+            : Response.builder()
+                .zonedTimestamp(timestamp)
+                .status(HttpStatus.NOT_IMPLEMENTED.value())
+                .meaning(HttpStatus.NOT_IMPLEMENTED.getReasonPhrase())
+                .agent(probe.getName())
+                .message(String.format("Probed service with '%s' and it appears to be down", probe.getName()))
+                .build();
         return response;
     }
 
