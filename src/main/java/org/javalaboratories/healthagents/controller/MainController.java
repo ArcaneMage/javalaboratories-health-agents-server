@@ -35,6 +35,7 @@ import java.util.function.Function;
 @RestController
 @PreAuthorize("hasRole('MONITOR')")
 @RequestMapping("/api/agents")
+@SuppressWarnings("unused")
 public class MainController {
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -46,6 +47,7 @@ public class MainController {
 
     /**
      * Handles {@code GET /api/agents/ftp/health} endpoint.
+     *
      * @param request Incoming GET request: note security has already authorised
      *                this request.
      * @return Response object encapsulating with status of the FTP service.
@@ -58,6 +60,7 @@ public class MainController {
 
     /**
      * Handles {@code GET /api/agents/secure-traffic/health} endpoint.
+     *
      * @param request Incoming GET request: note security has already authorised
      *                this request.
      * @return Response object encapsulating with status of the VPN service.
@@ -70,6 +73,7 @@ public class MainController {
 
     /**
      * Handles {@code GET /api/agents/service/health} endpoint.
+     *
      * @param request Incoming GET request: note security has already authorised
      *                this request.
      * @return Response object encapsulating with status of the VPN service.
