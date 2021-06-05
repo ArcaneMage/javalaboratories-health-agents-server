@@ -52,6 +52,19 @@ public class MainControllerIntegrationTest {
 	}
 
 	@Test
+	public void testMainController_LogHealth_Forbidden() throws Exception {
+		// Given
+		// When
+		LogCaptor logCaptor = LogCaptor.forClass(RsaSecureIdAuthenticationFilter.class);
+		mockMvc.perform(get("https://localhost/api/agents/log/health")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
+		// Then
+		assertTrue(logCaptor.getErrorLogs().stream()
+				.anyMatch(s -> s.contains("RSA secure identifier invalid")));
+	}
+
+	@Test
 	public void testMainController_VpnHealth_Forbidden() throws Exception {
 		// Given
 		// When
@@ -153,6 +166,22 @@ public class MainControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("monitor") // ROLE_MONITOR
+	public void testMainController_LogHealth_Pass() throws Exception {
+		// Given
+		System.setProperty("LOG_DIRECTORY","target/test-classes");
+
+		// When
+		LogCaptor logCaptor = LogCaptor.forClass(MainController.class);
+		mockMvc.perform(getWithCredentials("https://localhost/api/agents/log/health?silencehours=24")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().is5xxServerError());
+		// Then
+		assertTrue(logCaptor.getInfoLogs().stream()
+				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be down")));
+	}
+
+	@Test
+	@WithUserDetails("monitor") // ROLE_MONITOR
 	public void testMainController_VpnHealth_Pass() throws Exception {
 		// Given
 		// When
@@ -178,7 +207,6 @@ public class MainControllerIntegrationTest {
 		assertTrue(logCaptor.getInfoLogs().stream()
 				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("No additional information")));
 	}
-
 
 	private MockHttpServletRequestBuilder getWithCredentials(final String url) {
 		return MockMvcRequestBuilders.get(url)

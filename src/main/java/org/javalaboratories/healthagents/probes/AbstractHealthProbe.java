@@ -25,6 +25,10 @@ public abstract class AbstractHealthProbe implements HealthProbe {
         this.rendererFactory = rendererFactory;
     }
 
+    protected AbstractHealthProbe() {
+        rendererFactory = null;
+    }
+
     protected Channel probeProcessStatus(final String name) {
         Objects.requireNonNull(name,"Requires process getName");
 
