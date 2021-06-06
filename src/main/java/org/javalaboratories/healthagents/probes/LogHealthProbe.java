@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogHealthProbe extends AbstractHealthProbe{
+public abstract class LogHealthProbe extends AbstractHealthProbe {
 
     private static final String LOG_DIRECTORY = System.getProperty("LOG_DIRECTORY");
     private static final String LOG_FILENAME = "health-agents-server.log";
@@ -32,17 +32,22 @@ public class LogHealthProbe extends AbstractHealthProbe{
     }
 
     /**
-     * @return {@code true} to indicate no errors found; otherwise false is returned.
+     * @return {@code true} to indicate no errors/exceptions probed at this time,
+     * otherwise {@code false}.
      */
     @Override
     public boolean detect() {
+        return !probeErrorInLogs();
+    }
+
+    protected boolean probeErrorInLogs() {
         Path path = Paths.get(String.format("%s%s%s",LOG_DIRECTORY, File.separator, LOG_FILENAME));
 
         String s = Try.of (() -> new String(Files.readAllBytes(path)))
-                      .recover(e -> e instanceof IOException ? "" : e)
-                      .map(Object::toString) // if success, convert to string
-                      .map(this::findError)
-                      .orElseThrow(IllegalStateException::new);
+                .recover(e -> e instanceof IOException ? "" : e)
+                .map(Object::toString) // if success, convert to string
+                .map(this::findError)
+                .orElseThrow(IllegalStateException::new);
 
         boolean result = false;
         if (s.length() > 0) {
@@ -54,7 +59,7 @@ public class LogHealthProbe extends AbstractHealthProbe{
             result = duration.toHours() <= silenceHours;
         }
 
-        return !result;
+        return result;
     }
 
     private String findError(final String s) {
@@ -66,10 +71,5 @@ public class LogHealthProbe extends AbstractHealthProbe{
             result = matcher.group();
         }
         return result;
-    }
-
-    @Override
-    public String getName() {
-        return "Log-Probe";
     }
 }

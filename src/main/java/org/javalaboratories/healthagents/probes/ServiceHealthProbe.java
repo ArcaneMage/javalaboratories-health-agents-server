@@ -13,8 +13,8 @@ public final class ServiceHealthProbe extends AbstractHealthProbe implements App
 
     private ApplicationContext context;
 
-    public ServiceHealthProbe(CommandRendererFactory rendererFactory) {
-        super(rendererFactory);
+    public ServiceHealthProbe() {
+        super();
     }
 
     @Override

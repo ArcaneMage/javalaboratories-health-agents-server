@@ -1,6 +1,6 @@
 package org.javalaboratories.healthagents.probes;
 
-public final class PureFtpHealthProbe extends AbstractHealthProbe {
+public final class PureFtpHealthProbe extends ProcessHealthProbe {
 
     private static final String FTP_PROCESS_NAME="pure-ftpd";
 

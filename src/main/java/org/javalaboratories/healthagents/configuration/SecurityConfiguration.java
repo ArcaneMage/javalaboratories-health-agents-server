@@ -111,7 +111,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // Authorisation
                 .authorizeRequests()
                 .antMatchers("/ftp/health").hasRole(MonitorRepository.ROLE_MONITOR)
-                .antMatchers("/log/health").hasRole(MonitorRepository.ROLE_MONITOR)
+                .antMatchers("/requests/health").hasRole(MonitorRepository.ROLE_MONITOR)
                 .antMatchers("/secure-traffic/health").hasRole(MonitorRepository.ROLE_MONITOR)
                 .antMatchers("/service/health").hasRole(MonitorRepository.ROLE_MONITOR)
                 .and()

@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,11 +62,11 @@ public class MainController {
      *                this request.
      * @return Response object encapsulating with status of the VPN service.
      */
-    @GetMapping("/log/health")
-    public ResponseEntity<Response> getLogHealth(final HttpServletRequest request,
+    @GetMapping("/requests/health")
+    public ResponseEntity<Response> getRequestsHealth(final HttpServletRequest request,
                                                  @RequestParam(name="silencehours",required=false) Integer silenceHours) {
         silenceHours = silenceHours == null ? 1 : silenceHours;
-        HealthProbe probe = new LogHealthProbe(RequestRejectedException.class, silenceHours);
+        HealthProbe probe = new RejectedRequestsHealthProbe(silenceHours);
         return handleRequest(probe,request,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

@@ -1,6 +1,6 @@
 package org.javalaboratories.healthagents.probes;
 
-public final class OpenVpnHealthProbe extends AbstractHealthProbe {
+public final class OpenVpnHealthProbe extends ProcessHealthProbe {
 
     private static final String VPN_PROCESS_NAME="openvpn";
     private static final String VPN_CONFIG_DIR  ="/etc/openvpn";

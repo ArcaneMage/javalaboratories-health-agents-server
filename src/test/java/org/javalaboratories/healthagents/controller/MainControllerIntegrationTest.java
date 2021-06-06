@@ -52,11 +52,11 @@ public class MainControllerIntegrationTest {
 	}
 
 	@Test
-	public void testMainController_LogHealth_Forbidden() throws Exception {
+	public void testMainController_RequestsHealth_Forbidden() throws Exception {
 		// Given
 		// When
 		LogCaptor logCaptor = LogCaptor.forClass(RsaSecureIdAuthenticationFilter.class);
-		mockMvc.perform(get("https://localhost/api/agents/log/health")
+		mockMvc.perform(get("https://localhost/api/agents/requests/health")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isForbidden());
 		// Then
@@ -166,13 +166,13 @@ public class MainControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("monitor") // ROLE_MONITOR
-	public void testMainController_LogHealth_Pass() throws Exception {
+	public void testMainController_RequestsHealth_Pass() throws Exception {
 		// Given
 		System.setProperty("LOG_DIRECTORY","target/test-classes");
 
 		// When
 		LogCaptor logCaptor = LogCaptor.forClass(MainController.class);
-		mockMvc.perform(getWithCredentials("https://localhost/api/agents/log/health?silencehours=24")
+		mockMvc.perform(getWithCredentials("https://localhost/api/agents/requests/health?silencehours=24")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().is5xxServerError());
 		// Then
