@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  */
 @Value
 public class Response {
-    public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd hh:mm:ss (z)";
+    public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss (z)";
     private static final String DEFAULT_AGENT = "Unknown service";
     private static final String DEFAULT_MESSAGE = "No additional information";
 
