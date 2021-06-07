@@ -151,7 +151,7 @@ public class MainController {
                 .status(responseCode.value())
                 .meaning(responseCode.getReasonPhrase())
                 .agent(probe.getName())
-                .message(String.format("Probed service with '%s' and it appears to be down", probe.getName()))
+                .message(String.format("Probed service with '%s' and it appears to be unstable or down", probe.getName()))
                 .build();
         return response;
     }

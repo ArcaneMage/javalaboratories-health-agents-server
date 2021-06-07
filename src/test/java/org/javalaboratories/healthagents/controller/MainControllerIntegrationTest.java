@@ -161,7 +161,7 @@ public class MainControllerIntegrationTest {
 				.andExpect(status().isNotImplemented());
 		// Then
 		assertTrue(logCaptor.getInfoLogs().stream()
-				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be down")));
+				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be unstable or down")));
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class MainControllerIntegrationTest {
 				.andExpect(status().is5xxServerError());
 		// Then
 		assertTrue(logCaptor.getInfoLogs().stream()
-				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be down")));
+				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be unstable or down")));
 	}
 
 	@Test
@@ -191,7 +191,7 @@ public class MainControllerIntegrationTest {
 				.andExpect(status().isNotImplemented());
 		// Then
 		assertTrue(logCaptor.getInfoLogs().stream()
-				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be down")));
+				.anyMatch(s -> s.startsWith("Responding with 'Response[") && s.contains("it appears to be unstable or down")));
 	}
 
 	@Test
