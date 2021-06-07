@@ -172,7 +172,7 @@ public class MainControllerIntegrationTest {
 
 		// When
 		LogCaptor logCaptor = LogCaptor.forClass(MainController.class);
-		mockMvc.perform(getWithCredentials("https://localhost/api/agents/requests/health?silencehours=24")
+		mockMvc.perform(getWithCredentials("https://localhost/api/agents/requests/health?alertTTL=1440")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().is5xxServerError());
 		// Then

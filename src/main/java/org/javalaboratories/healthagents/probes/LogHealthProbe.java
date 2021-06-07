@@ -14,22 +14,25 @@ import java.util.regex.Pattern;
 
 public abstract class LogHealthProbe extends AbstractHealthProbe {
 
-    public static final int DEFAULT_SILENCE_HOURS = 1;
+    public static final int DEFAULT_ALERT_TTL_MINUTES = 15;
 
     private static final String EXCEPTION_PATTERN = "\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d.*ERROR.*\\n.*%s";
     private static final String LOG_DIRECTORY = System.getProperty("LOG_DIRECTORY",".");
     private static final String LOG_FILENAME = "health-agents-server.log";
 
     private final Class<? extends Exception> clazz;
-    private final int silenceHours;
+    private final int alertTtlMinutes;
 
-    public LogHealthProbe(final Class<? extends Exception> clazz) {
-        this(clazz,DEFAULT_SILENCE_HOURS);
+    public LogHealthProbe(final Class<? extends Exception> clazz, final int alertTtlMinutes) {
+        this.clazz = Objects.requireNonNull(clazz,"Expected class name");
+        this.alertTtlMinutes = Math.max(alertTtlMinutes, DEFAULT_ALERT_TTL_MINUTES);
     }
 
-    public LogHealthProbe(final Class<? extends Exception> clazz, int silenceHours) {
-        this.clazz = Objects.requireNonNull(clazz,"Expected class name");
-        this.silenceHours = Math.max(silenceHours, DEFAULT_SILENCE_HOURS);
+    /**
+     * @return The length of time (time-to-live) for which an exception is reported.
+     */
+    public int getAlertTtlMinutes() {
+        return alertTtlMinutes;
     }
 
     /**
@@ -44,7 +47,7 @@ public abstract class LogHealthProbe extends AbstractHealthProbe {
     protected boolean probeErrors() {
         Path path = Paths.get(String.format("%s%s%s",LOG_DIRECTORY, File.separator, LOG_FILENAME));
 
-        return Try.of (() -> new String(Files.readAllBytes(path)))
+        return Try.of(() -> new String(Files.readAllBytes(path)))
                 .map(this::probeErrors)
                 .orElseThrow(() -> new IllegalStateException("Log directory/file not found"));
     }
@@ -63,8 +66,8 @@ public abstract class LogHealthProbe extends AbstractHealthProbe {
                 LocalTime now = LocalTime.now();
 
                 Duration duration = Duration.between(timestamp,now).abs();
-                // Alert only if found in the last hour.
-                alert = duration.toHours() < silenceHours;
+                // Alert this exception only if with alert TTL (time-to-live).
+                alert = duration.toMinutes() < alertTtlMinutes;
             }
         }
         return alert;

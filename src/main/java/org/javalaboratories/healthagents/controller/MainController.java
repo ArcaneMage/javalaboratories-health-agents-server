@@ -64,9 +64,9 @@ public class MainController {
      */
     @GetMapping("/requests/health")
     public ResponseEntity<Response> getRequestsHealth(final HttpServletRequest request,
-                                                 @RequestParam(name="silencehours",required=false) Integer silenceHours) {
-        silenceHours = silenceHours == null ? 1 : silenceHours;
-        HealthProbe probe = new RequestsHealthProbe(silenceHours);
+                                                 @RequestParam(name="alertTTL",required=false) Integer alertTtlMinutes) {
+        alertTtlMinutes = alertTtlMinutes == null ? LogHealthProbe.DEFAULT_ALERT_TTL_MINUTES : alertTtlMinutes;
+        HealthProbe probe = new RequestsHealthProbe(alertTtlMinutes);
         return handleRequest(probe,request,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
