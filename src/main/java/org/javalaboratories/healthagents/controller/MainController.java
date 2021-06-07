@@ -56,7 +56,7 @@ public class MainController {
     }
 
     /**
-     * Handles {@code GET /api/agents/secure-traffic/health} endpoint.
+     * Handles {@code GET /api/agents/requests/health} endpoint.
      *
      * @param request Incoming GET request: note security has already authorised
      *                this request.
