@@ -3,7 +3,6 @@ package org.javalaboratories.healthagents.probes;
 import org.javalaboratories.core.Try;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,9 +14,11 @@ import java.util.regex.Pattern;
 
 public abstract class LogHealthProbe extends AbstractHealthProbe {
 
-    private static final String LOG_DIRECTORY = System.getProperty("LOG_DIRECTORY");
+    public static final int DEFAULT_SILENCE_HOURS = 1;
+
+    private static final String EXCEPTION_PATTERN = "\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d.*ERROR.*\\n.*%s";
+    private static final String LOG_DIRECTORY = System.getProperty("LOG_DIRECTORY",".");
     private static final String LOG_FILENAME = "health-agents-server.log";
-    private static final int DEFAULT_SILENCE_HOURS = 1;
 
     private final Class<? extends Exception> clazz;
     private final int silenceHours;
@@ -37,39 +38,35 @@ public abstract class LogHealthProbe extends AbstractHealthProbe {
      */
     @Override
     public boolean detect() {
-        return !probeErrorInLogs();
+        return !probeErrors();
     }
 
-    protected boolean probeErrorInLogs() {
+    protected boolean probeErrors() {
         Path path = Paths.get(String.format("%s%s%s",LOG_DIRECTORY, File.separator, LOG_FILENAME));
 
-        String s = Try.of (() -> new String(Files.readAllBytes(path)))
-                .recover(e -> e instanceof IOException ? "" : e)
-                .map(Object::toString) // if success, convert to string
-                .map(this::findError)
-                .orElseThrow(IllegalStateException::new);
-
-        boolean result = false;
-        if (s.length() > 0) {
-            LocalTime timestamp = LocalTime.parse(s.substring(0,8));
-            LocalTime now = LocalTime.now();
-
-            Duration duration = Duration.between(timestamp,now);
-            // Alert only if found in the last hour (false == probe is "down").
-            result = duration.toHours() <= silenceHours;
-        }
-
-        return result;
+        return Try.of (() -> new String(Files.readAllBytes(path)))
+                .map(this::probeErrors)
+                .orElseThrow(() -> new IllegalStateException("Log directory/file not found"));
     }
 
-    private String findError(final String s) {
-        String classname = clazz.getSimpleName();
-        Pattern p = Pattern.compile(String.format("\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d.*ERROR.*\\n.*%s",classname));
+    private boolean probeErrors(final String s) {
         String result = "";
+        String classname = clazz.getSimpleName();
+        Pattern p = Pattern.compile(String.format(EXCEPTION_PATTERN,classname));
+
         Matcher matcher = p.matcher(s);
-        if ( matcher.find() ) {
+        boolean alert = false;
+        while (matcher.find() && !alert) {
             result = matcher.group();
+            if (result.length() > 0) {
+                LocalTime timestamp = LocalTime.parse(result.substring(0,8));
+                LocalTime now = LocalTime.now();
+
+                Duration duration = Duration.between(timestamp,now).abs();
+                // Alert only if found in the last hour.
+                alert = duration.toHours() < silenceHours;
+            }
         }
-        return result;
+        return alert;
     }
 }
