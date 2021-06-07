@@ -10,12 +10,12 @@
 ## Introduction
 This application has a number of implemented `Health-Probe` agents that are
 responsible or detecting the availability of specific services, these are as follows:
-| HealthProbe        | Description                                             | Endpoint                         |
-| -------------------|---------------------------------------------------------|----------------------------------|
-| OpenVpnHealthProbe | Detects availability of OpenVPN server                  | /api/agents/secure-traffic/health|
-| PureFtpHealthProbe | Detects availability of PureFTP server                  | /api/agents/ftp/health           |
-| RequestsHealthProbe| Detects rejected requests that could undermine security | /api/agents/requests/health      |
-| ServiceHealthProbe | Detects availability of this Health-Agents server       | /api/agents/service/health       |
+| HealthProbe        | Description                                           | Endpoint                         |
+| -------------------|-------------------------------------------------------|----------------------------------|
+| OpenVpnHealthProbe | Detects availability of OpenVPN server                | /api/agents/secure-traffic/health|
+| PureFtpHealthProbe | Detects availability of PureFTP server                | /api/agents/ftp/health           |
+| RequestsHealthProbe| Detects rejected requests that may undermine security | /api/agents/requests/health      |
+| ServiceHealthProbe | Detects availability of this Health-Agents server     | /api/agents/service/health       |
 
 There will be additional `HealthProbes` implemented in the not too distant future. The inspiration for
 this application came about when I deployed the `OpenVPN` server in the cloud, but needed to determine
