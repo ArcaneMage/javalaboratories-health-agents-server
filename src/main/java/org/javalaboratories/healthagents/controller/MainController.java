@@ -64,9 +64,9 @@ public class MainController {
      */
     @GetMapping("/requests/health")
     public ResponseEntity<Response> getRequestsHealth(final HttpServletRequest request,
-                                                 @RequestParam(name="alertTTL",required=false) Integer alertTtlMinutes) {
-        alertTtlMinutes = alertTtlMinutes == null ? LogHealthProbe.DEFAULT_ALERT_TTL_MINUTES : alertTtlMinutes;
-        HealthProbe probe = new RequestsHealthProbe(alertTtlMinutes);
+                                                      @RequestParam(name="alertTTL",required=false) Integer alertTTL) {
+        alertTTL = alertTTL == null ? LogHealthProbe.DEFAULT_ALERT_TTL_MINUTES : alertTTL;
+        HealthProbe probe = new RequestsHealthProbe(alertTTL);
         return handleRequest(probe,request,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -123,7 +123,8 @@ public class MainController {
      * @param responseCode custom response code for errors.
      * @return resultant response encapsulates service detection.
      */
-    protected final ResponseEntity<Response> handleRequest(final HealthProbe probe, final HttpServletRequest request, final HttpStatus responseCode) {
+    protected final ResponseEntity<Response> handleRequest(final HealthProbe probe, final HttpServletRequest request,
+                                                           final HttpStatus responseCode) {
         Function<HealthProbe,ResponseEntity<Response>> function = timeRequest(p -> {
             Response response = detect(p, responseCode);
             logger.info("Responding with '{}' to monitor",response);

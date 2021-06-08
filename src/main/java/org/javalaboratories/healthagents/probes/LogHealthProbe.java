@@ -21,18 +21,19 @@ public abstract class LogHealthProbe extends AbstractHealthProbe {
     private static final String LOG_FILENAME = "health-agents-server.log";
 
     private final Class<? extends Exception> clazz;
-    private final int alertTtlMinutes;
+    private final int alertTTL;
 
-    public LogHealthProbe(final Class<? extends Exception> clazz, final int alertTtlMinutes) {
+    public LogHealthProbe(final Class<? extends Exception> clazz, final int alertTTL) {
         this.clazz = Objects.requireNonNull(clazz,"Expected class name");
-        this.alertTtlMinutes = Math.max(alertTtlMinutes, DEFAULT_ALERT_TTL_MINUTES);
+        this.alertTTL = Math.max(alertTTL, DEFAULT_ALERT_TTL_MINUTES);
     }
 
     /**
-     * @return The length of time (time-to-live) for which an exception is reported.
+     * @return The length of time in minutes (time-to-live) for which an
+     * exception is reported.
      */
-    public int getAlertTtlMinutes() {
-        return alertTtlMinutes;
+    public int getAlertTTL() {
+        return alertTTL;
     }
 
     /**
@@ -41,18 +42,18 @@ public abstract class LogHealthProbe extends AbstractHealthProbe {
      */
     @Override
     public boolean detect() {
-        return !probeErrors();
+        return !probeLogErrors();
     }
 
-    protected boolean probeErrors() {
+    protected boolean probeLogErrors() {
         Path path = Paths.get(String.format("%s%s%s",LOG_DIRECTORY, File.separator, LOG_FILENAME));
 
         return Try.of(() -> new String(Files.readAllBytes(path)))
-                .map(this::probeErrors)
+                .map(this::probeLogErrors)
                 .orElseThrow(() -> new IllegalStateException("Log directory/file not found"));
     }
 
-    private boolean probeErrors(final String s) {
+    private boolean probeLogErrors(final String s) {
         String result = "";
         String classname = clazz.getSimpleName();
         Pattern p = Pattern.compile(String.format(EXCEPTION_PATTERN,classname));
@@ -67,7 +68,7 @@ public abstract class LogHealthProbe extends AbstractHealthProbe {
 
                 Duration duration = Duration.between(timestamp,now).abs();
                 // Alert this exception only if with alert TTL (time-to-live).
-                alert = duration.toMinutes() < alertTtlMinutes;
+                alert = duration.toMinutes() < alertTTL;
             }
         }
         return alert;
