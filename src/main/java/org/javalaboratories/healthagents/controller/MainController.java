@@ -1,8 +1,14 @@
 package org.javalaboratories.healthagents.controller;
 
+import org.javalaboratories.core.util.StopWatch;
 import org.javalaboratories.healthagents.model.Response;
-import org.javalaboratories.core.util.Arguments;
-import org.javalaboratories.healthagents.probes.*;
+import org.javalaboratories.healthagents.probes.CommandRendererFactory;
+import org.javalaboratories.healthagents.probes.HealthProbe;
+import org.javalaboratories.healthagents.probes.LogHealthProbe;
+import org.javalaboratories.healthagents.probes.OpenVpnHealthProbe;
+import org.javalaboratories.healthagents.probes.PureFtpHealthProbe;
+import org.javalaboratories.healthagents.probes.RequestsHealthProbe;
+import org.javalaboratories.healthagents.probes.ServiceHealthProbe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
-import java.util.function.Function;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main controller to handle all health-agent requests.
@@ -125,18 +130,15 @@ public class MainController {
      */
     protected final ResponseEntity<Response> handleRequest(final HealthProbe probe, final HttpServletRequest request,
                                                            final HttpStatus responseCode) {
-        Function<HealthProbe,ResponseEntity<Response>> function = timeRequest(p -> {
-            Response response = detect(p, responseCode);
-            logger.info("Responding with '{}' to monitor",response);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "application/json; charset=utf-8");
-            return new ResponseEntity<>(response,headers,HttpStatus.valueOf(response.getStatus()));
-        },request.getRequestURI());
+        StopWatch watch = StopWatch.watch("handleRequest");
+        ResponseEntity<Response> responseEntity = watch.time(() -> detect(probe, responseCode));
+        logger.info("Response elapsed time for REST endpoint '{}' was {}ms", request.getRequestURI(),
+                watch.getTime(TimeUnit.MILLISECONDS));
 
-        return function.apply(probe);
+        return responseEntity;
     }
 
-    private Response detect(final HealthProbe probe, HttpStatus responseCode) {
+    private ResponseEntity<Response> detect(final HealthProbe probe, final HttpStatus responseCode) {
         Response response;
         ZonedDateTime timestamp = ZonedDateTime.now();
         boolean detected = probe.detect();
@@ -154,22 +156,10 @@ public class MainController {
                 .agent(probe.getName())
                 .message(String.format("Probed service with '%s' and it appears to be unstable or down", probe.getName()))
                 .build();
-        return response;
-    }
+        logger.info("Responding with '{}' to monitor",response);
 
-    private <T,R> Function<T,R> timeRequest(final Function<? super T, ? extends R> action, final String uri) {
-        Arguments.requireNonNull("Requires both action and URI objects",action,uri);
-        return value -> {
-            StopWatch watch = new StopWatch();
-            R result;
-            try {
-                watch.start();
-                result = action.apply(value);
-            } finally {
-                watch.stop();
-            }
-            logger.info("Response elapsed time for REST endpoint '{}' was {}ms", uri, watch.getTotalTimeMillis());
-            return result;
-        };
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+        return new ResponseEntity<>(response,headers,HttpStatus.valueOf(response.getStatus()));
     }
 }
