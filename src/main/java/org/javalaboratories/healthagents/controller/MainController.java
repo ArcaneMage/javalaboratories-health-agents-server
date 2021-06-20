@@ -130,7 +130,7 @@ public class MainController {
      */
     protected final ResponseEntity<Response> handleRequest(final HealthProbe probe, final HttpServletRequest request,
                                                            final HttpStatus responseCode) {
-        StopWatch watch = StopWatch.watch("handleRequest");
+        StopWatch watch = StopWatch.watch("detect");
         ResponseEntity<Response> responseEntity = watch.time(() -> detect(probe, responseCode));
         logger.info("Response elapsed time for REST endpoint '{}' was {}ms", request.getRequestURI(),
                 watch.getTime(TimeUnit.MILLISECONDS));
