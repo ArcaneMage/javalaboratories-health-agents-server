@@ -14,8 +14,9 @@
 	<description>Health-Agents server. Monitors server processes for possible security breaches</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<javalaboratories.version>1.1.8-RELEASE</javalaboratories.version>
+		<javalaboratories.version>1.1.9-RELEASE</javalaboratories.version>
 		<janino.version>3.1.3</janino.version>
+		<apache-commons-codec-version>1.15</apache-commons-codec-version>
 
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -28,6 +29,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${apache-commons-codec-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>

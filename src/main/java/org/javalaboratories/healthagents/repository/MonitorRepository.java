@@ -1,14 +1,18 @@
 package org.javalaboratories.healthagents.repository;
 
+import org.apache.commons.codec.binary.Base64;
 import org.javalaboratories.core.Maybe;
-import org.javalaboratories.core.cryptography.AesCryptography;
+import org.javalaboratories.core.cryptography.Cryptography;
+import org.javalaboratories.core.cryptography.CryptographyFactory;
 import org.javalaboratories.healthagents.model.yaml.IdentityManagement;
 import org.javalaboratories.healthagents.model.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StreamUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -51,7 +55,14 @@ public final class MonitorRepository {
         InputStream stream;
         stream = getResource(SECURITY_PASSWD_FILE);
         Yaml yaml = new Yaml(new Constructor(IdentityManagement.class));
-        identities = yaml.loadAs(AesCryptography.decrypt(stream),IdentityManagement.class);
+        String iam = "";
+        try {
+            Cryptography cryptography = CryptographyFactory.getSunCryptography();
+            iam = new String(cryptography.decrypt(Base64.decodeBase64(StreamUtils.copyToByteArray(stream))));
+        } catch (IOException e) {
+            // Handled
+        }
+        identities = yaml.loadAs(iam,IdentityManagement.class);
     }
 
     /**
