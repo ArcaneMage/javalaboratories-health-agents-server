@@ -1,6 +1,6 @@
-package org.javalaboratories.healthagents.probes;
+package org.javalaboratories.healthagents.controller;
 
-import org.javalaboratories.healthagents.controller.MainController;
+import org.javalaboratories.healthagents.probes.AbstractHealthProbe;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
