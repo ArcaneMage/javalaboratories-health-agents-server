@@ -1,6 +1,10 @@
 # Dockerizes heal-agents-server
+#
 # Build command:
 # docker build --build-arg JAR_FILE=health-agents-server-1.0.8-SNAPSHOT.jar -t health-agents-server:1.0.8 .
+#
+# Container:
+# docker run --detach -p 443:433 -v /tmp:/tmp <image-id>
 #
 FROM eclipse-temurin:11
 MAINTAINER javalaboratories.org
