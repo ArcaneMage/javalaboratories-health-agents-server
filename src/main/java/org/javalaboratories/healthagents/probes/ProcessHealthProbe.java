@@ -22,7 +22,7 @@ public abstract class ProcessHealthProbe extends AbstractHealthProbe {
     }
 
     protected Channel probeProcessStatus(final String name) {
-        Objects.requireNonNull(name,"Requires process getName");
+        Objects.requireNonNull(name,"Requires process name");
 
         int exitValue = -1;
         InputStream stream = EMPTY_INPUTSTREAM;
@@ -39,7 +39,7 @@ public abstract class ProcessHealthProbe extends AbstractHealthProbe {
             stream = process.getInputStream();
 
             if (exitValue != 0)
-                logger.warn("Health probe subprocess returned non-zero exit code '{}'",exitValue);
+                logger.warn("Health probe subprocess returned non-zero exit code \"{}\"",exitValue);
             else
                 logger.info("Health probe subprocess exited successfully");
         } catch (InterruptedException e) {
