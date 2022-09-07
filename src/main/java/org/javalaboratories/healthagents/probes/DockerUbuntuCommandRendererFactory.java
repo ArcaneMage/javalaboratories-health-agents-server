@@ -1,6 +1,6 @@
 package org.javalaboratories.healthagents.probes;
 
-public class DockerUbuntuCommandRendererFactory implements CommandRendererFactory {
+public final class DockerUbuntuCommandRendererFactory implements CommandRendererFactory {
 
     @Override
     public CommandRenderer processStatusRenderer() {
