@@ -26,7 +26,7 @@ public final class DockerUbuntuProcessStatusCommandRenderer implements CommandRe
         List<String> result = new ArrayList<>();
         result.add("/usr/bin/bash");
         result.add("-c");
-        result.add(String.format("sudo cat /tmp/%s | grep \"%s\" | head -n1", HOST_PROCESS_STATUS_FILE,name));
+        result.add(String.format("cat /tmp/%s | grep \"%s\" | head -n1", HOST_PROCESS_STATUS_FILE,name));
         return result.toArray(new String[0]);
     }
 }
