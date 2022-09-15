@@ -85,7 +85,7 @@ the server:
 1. Download docker from https://www.docker.com
 2. Build the server, see "Building the application"
 3. Build docker image with the command: `docker build --build-arg JAR_FILE=health-agents-server-1.0.8-SNAPSHOT.jar -t health-agents-server:1.0.8 .`
-4. Make copy the `image-id` obtained from the command: `docker images`
+4. Copy the `image-id` obtained from the command: `docker images`
 5. Run the container with the command: `docker run --detach -p 443:433 -v /tmp:/tmp <image-id>`
 
 ## License
