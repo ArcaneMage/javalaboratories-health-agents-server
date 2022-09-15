@@ -2,7 +2,7 @@
 
 ## Technologies
 * Spring Boot 2.4.4, Spring Framework 5.3.5.
-* Docker 
+* Docker 3.3.1
 * Digest Authorization security applied to REST APIs.
 * RsaSecureIdAuthenticationFilter introduced for additional security of REST API.  
 * Enabled HTTPS/SSL.
