@@ -2,6 +2,7 @@
 
 ## Technologies
 * Spring Boot 2.4.4, Spring Framework 5.3.5.
+* Docker 
 * Digest Authorization security applied to REST APIs.
 * RsaSecureIdAuthenticationFilter introduced for additional security of REST API.  
 * Enabled HTTPS/SSL.
@@ -77,6 +78,15 @@ the encrypted `Yaml` file, but it must reside the main `resource` directory once
 3. Alternatively, for deployment in a Linux environment, consider the following command `mvn clean 
    verify` and this will create a zipped package, something like `health-agents-server-1.0.3-SNAPSHOT.zip`,
    containing `bash-scripts` to manage the server. 
+
+## Docker
+For convenience, the server has been "Dockerized" for easy deployment. Follow the instructions below to run
+the server:
+1. Download docker from https://www.docker.com
+2. Build the server, see "Building the application"
+3. Build docker image with the command: `docker build --build-arg JAR_FILE=health-agents-server-1.0.8-SNAPSHOT.jar -t health-agents-server:1.0.8 .`
+4. Make copy the `image-id` obtained from the command: `docker images`
+5. Run the container with the command: `docker run --detach -p 443:433 -v /tmp:/tmp <image-id>`
 
 ## License
 Apache Version 2.0, (c) 2021 javalaboratories.org, Kevin Henry (AM)

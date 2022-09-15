@@ -7,6 +7,7 @@
 # docker run --detach -p 443:433 -v /tmp:/tmp <image-id>
 #
 FROM eclipse-temurin:11
+
 MAINTAINER javalaboratories.org
 
 ARG JAR_FILE
